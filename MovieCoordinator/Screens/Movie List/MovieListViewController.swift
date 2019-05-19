@@ -8,9 +8,16 @@
 
 import UIKit
 
+protocol MovieListViewControllerDelegate: class {
+  
+  func movieListViewController(_ controller: MovieListViewController, didSelect movie: Movie)
+  
+}
+
 class MovieListViewController: UICollectionViewController {
     
     var movies: [Movie] = Movie.dummyMovies
+    weak var delegate: MovieListViewControllerDelegate?
     
     init() {
         super.init(collectionViewLayout: UICollectionViewFlowLayout())
@@ -54,17 +61,9 @@ class MovieListViewController: UICollectionViewController {
     }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        collectionView.deselectItem(at: indexPath, animated: true)
-        self.performSegue(withIdentifier: "showDetail", sender: indexPath)
-    }
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        guard let movieDetailVC = segue.destination as? MovieDetailViewController, let indexPath = sender as? IndexPath else {
-            fatalError("Unexpected View Controller")
-        }
-        
         let movie = movies[indexPath.item]
-        movieDetailVC.movie = movie
+        delegate?.movieListViewController(self, didSelect: movie)
     }
+  
 }
 
